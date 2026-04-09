@@ -1,80 +1,64 @@
-# 🛒 Grocery Website
+# 🛒 Grocery Website - Backend
 
-A full-stack grocery e-commerce web application that allows users to browse products, add items to cart, and place orders seamlessly. This project is built with modern technologies to provide a fast, scalable, and user-friendly shopping experience.
+This is the backend API for the Grocery E-commerce Web Application built using Node.js and Express. It handles product management, user authentication, cart operations, and order processing.
 
 ---
 
 ## 🚀 Features
 
-* 🥦 Browse products by category
-* 🔍 Search and filter functionality
-* 🛒 Add to cart and manage cart items
-* 💳 Secure checkout with Razorpay integration
-* 👤 User authentication system
-* 📦 Order management system
-* 🧾 Admin panel for product & category management
-* 📱 Fully responsive design
+* 🔐 User authentication & login system
+* 📦 Product & category management
+* 🛒 Cart management APIs
+* 💳 Razorpay payment integration
+* 📊 Order management system
+* 🧾 RESTful APIs
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
-
-* Next.js
-* React.js
-* Tailwind CSS / CSS Modules
-
-### Backend
-
 * Node.js
 * Express.js
-
-### Database
-
 * MySQL
-
-### Payment Integration
-
-* Razorpay
+* Razorpay API
 
 ---
 
 ## 📂 Project Structure
 
 ```
-/frontend   → Next.js application  
-/backend    → Node.js API  
-/database   → SQL scripts  
+/controllers   → Business logic  
+/routes        → API routes  
+/models        → Database queries  
+/config        → Configuration files  
+/utils         → Helper functions  
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Setup Instructions
 
-### 1️⃣ Clone the Repository
+### 1️⃣ Clone Repository
 
 ```
-git clone https://github.com/RUSHANG3003/grocery-website.git
-cd grocery-website
+git clone https://github.com/RUSHANG3003/grocery-backend.git
+cd grocery-backend
 ```
 
 ### 2️⃣ Install Dependencies
 
 ```
-cd frontend
-npm install
-
-cd ../backend
 npm install
 ```
+
+---
 
 ### 3️⃣ Setup Environment Variables
 
-Create a `.env` file in backend folder:
+Create `.env` file:
 
 ```
-PORT=3001
+PORT=3000
 
 DB_HOST=localhost
 DB_USER=root
@@ -87,54 +71,34 @@ RAZORPAY_SECRET=your_secret
 
 ---
 
-### 4️⃣ Run the Application
+### 4️⃣ Run the Server
 
 ```
-# Start backend
-cd backend
 npm start
-
-# Start frontend
-cd ../frontend
-npm run dev
 ```
 
----
-
-## 🌐 Usage
-
-* Open browser and go to: `http://localhost:3000`
-* Browse grocery items
-* Add products to cart
-* Proceed to checkout and complete payment
+Server will run on:
+👉 http://localhost:3001
 
 ---
 
-## 📸 Screenshots
+## 📌 API Endpoints (Example)
 
-(Add your project screenshots here)
+* `POST /api/auth/login` → User login
+* `GET /api/products` → Get all products
+* `POST /api/cart` → Add to cart
+* `POST /api/order` → Place order
 
 ---
 
-## ✨ Future Enhancements
+## ✨ Future Improvements
 
-* ❤️ Wishlist feature
-* 🔔 Notifications system
-* 📊 Admin dashboard analytics
+* 🔔 Email notifications
+* 📊 Admin analytics dashboard
 * 🚚 Real-time order tracking
-* 🌍 Multi-language support
 
 ---
 
-## 🤝 Contributing
+## 👨‍💻 Author
 
-Contributions are welcome!
-Feel free to fork this repository and submit a pull request.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-
+Developed by **ND**

@@ -1,6 +1,7 @@
 const productsRepository = require('../Repository/productsRepository');
 const Logger = require('../logger/logger');
 const LogType = require('../logger/logType');
+const path = require('path');
 const FailureResponse = require('../response/failureResponse');
 const SuccessResponse = require('../response/successReponse');
 
@@ -121,8 +122,12 @@ const productsController = {
 
 
         const imagePath = req.file
-            ? req.file.path.replace(/\\/g, "/").split("static/")[1]
+            ? path.relative(
+                path.join(__dirname, '..'), // project root tak aao
+                req.file.path
+            ).replace(/\\/g, '/')
             : null;
+
 
         if (!categoryId || !name || !description || !price || !imagePath || !stock || !isActive || !createdBy) {
             return res.status(400).json(
@@ -168,6 +173,101 @@ const productsController = {
             );
         });
 
+    },
+    updateProduct: (req, res) => {
+        const methodName = 'updateProduct';
+        const { productId, categoryId, name, description, discountPrice, price, stock, isActive, updatedBy } = req.body;
+
+
+        const imagePath = req.file
+            ? path.relative(
+                path.join(__dirname, '..'), // project root tak aao
+                req.file.path
+            ).replace(/\\/g, '/')
+            : null;
+
+
+        if (!productId || !categoryId || !name || !description || !price || !stock || !isActive || !updatedBy) {
+            return res.status(400).json(
+                new FailureResponse(false, 'All fields except image are required', '400')
+            );
+        }
+
+        logger.log(ControllerName, methodName, LogType.logType.VERBOSE,
+            'Initiating updateProduct process', JSON.stringify(req.body));
+
+        const productData = {
+            productId,
+            categoryId,
+            name,
+            description,
+            discountPrice,
+            price,
+            image: imagePath, // Will be null if no new image is uploaded
+            stock,
+            isActive,
+            updatedBy
+        };
+
+        productsRepository.updateProduct(productData, (err, result) => {
+            if (err) {
+                logger.log(ControllerName, methodName,
+                    LogType.logType.EXCEPTION,
+                    'Failed to updateProduct', err.stack);
+
+                return res.status(500).json(
+                    new FailureResponse(false, 'Failed to updateProduct', '500')
+                );
+            }
+
+            logger.log(ControllerName, methodName,
+                LogType.logType.RELEASE,
+                'updateProduct retrieved successfully', JSON.stringify(result));
+
+            return res.status(200).json(
+                new SuccessResponse(true, {
+                    updateProduct: result,
+                    message: 'updateProduct retrieved successfully'
+                })
+            );
+        });
+
+    },
+
+    deleteProduct: (req, res) => {
+        const methodName = 'deleteProduct';
+        const { productId } = req.query;
+
+        if (!productId) {
+            return res.status(400).json(
+                new FailureResponse(false, 'productId missing', '400')
+            )
+        }
+
+        logger.log(ControllerName, methodName, LogType.logType.VERBOSE, 'Deleting ProductByID', JSON.stringify(req.body));
+
+        productsRepository.deleteProduct(productId, (err, result) => {
+            if (err) {
+                logger.log(ControllerName, methodName,
+                    LogType.logType.EXCEPTION,
+                    'Failed to delete ProductByID', err.stack);
+
+                return res.status(500).json(
+                    new FailureResponse(false, 'Failed to delete ProductByID', '500')
+                );
+            }
+
+            logger.log(ControllerName, methodName,
+                LogType.logType.RELEASE,
+                'ProductByID deleted successfully', JSON.stringify(result));
+
+            return res.status(200).json(
+                new SuccessResponse(true, {
+                    deleteProduct: result,
+                    message: 'ProductByID deleted successfully'
+                })
+            );
+        })
     }
 
 }

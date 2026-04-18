@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const pool = require('../config/db');
+const pool = require('../Config/db');
 
 const storage = multer.diskStorage({
 
@@ -54,4 +54,44 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-module.exports = upload;
+
+
+
+const categoryStorage = multer.diskStorage({
+
+    destination: async (req, file, cb) => {
+        try {
+
+            const categoryUploadPath = path.join(
+                __dirname,
+                '..',
+                'static',
+                'categories'
+
+            );
+
+            // folder exist नहीं है तो बना दो
+            if (!fs.existsSync(categoryUploadPath)) {
+                fs.mkdirSync(categoryUploadPath, { recursive: true });
+            }
+
+            cb(null, categoryUploadPath);
+
+        } catch (err) {
+            cb(err);
+        }
+    },
+
+    filename: (req, file, cb) => {
+        const categoryName = req.body.categoryName 
+            ? req.body.categoryName.replace(/\s+/g, '') 
+            : 'category';
+        const extension = path.extname(file.originalname);
+        cb(null, `${categoryName}${extension}`);
+    }
+
+});
+
+const uploadCategory = multer({ storage: categoryStorage });
+
+module.exports = { upload, uploadCategory };

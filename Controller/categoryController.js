@@ -44,7 +44,12 @@ const categoryController = {
 
     addCategory: (req, res) => {
         const methodName = 'addCategory';
-        const { categoryName, categoryImage, createdBy } = req.body;
+        const { categoryName, createdBy } = req.body;
+
+        const categoryImage = req.file
+            ? `static/categories/${req.file.filename}`
+            : null;
+
 
         if (!categoryName || !categoryImage || !createdBy) {
             return res.status(400).json(
@@ -110,9 +115,13 @@ const categoryController = {
 
     updateCategory: (req, res) => {
         const methodName = 'updateCategory';
-        const { categoryId, categoryName, categoryImage, updatedBy } = req.body;
+        const { categoryId, categoryName, updatedBy } = req.body;
 
-        if (!categoryId || !categoryName || !categoryImage || !updatedBy) {
+        const categoryImage = req.file
+            ? `static/categories/${req.file.filename}`
+            : null;
+
+        if (!categoryId || !updatedBy) {
             return res.status(400).json(
                 new FailureResponse(false, 'All fields are Required', '400')
             );

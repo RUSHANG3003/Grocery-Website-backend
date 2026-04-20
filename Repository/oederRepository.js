@@ -1,5 +1,5 @@
 const pool = require('../config/db');
-const { getOrderHistoryByUserId } = require('../Controller/orderController');
+const { getOrderHistoryByUserId, updateOrderStatus } = require('../Controller/orderController');
 const Logger = require('../logger/logger');
 const logger = new Logger();
 const LogType = require('../logger/logType');
@@ -108,9 +108,7 @@ const orderRepository = {
                 ON o.address_id_fk = a.address_id_pk
             LEFT JOIN user_tbl u 
                 ON o.delivery_boy_id = u.user_id_pk
-
-            WHERE o.order_status IN ('PLACED','CONFIRMED')
-            AND o.delivery_boy_id IS NULL
+WHERE o.order_status IN ('PLACED','CONFIRMED','OUT_FOR_DELIVERY')
             ORDER BY o.order_id_pk DESC`;
             const [result] = await db.query(sql);
             logger.log(RepositoryName, methodName, LogType.logType.RELEASE, 'Available orders retrieved successfully', JSON.stringify(result));
@@ -121,6 +119,34 @@ const orderRepository = {
             logger.log(RepositoryName, methodName, LogType.logType.EXCEPTION, 'Error getting available orders', err.stack);
             callback(err, null);
 
+        }
+    },
+
+    updateOrderStatus: async (orderId, status, updatedBy, callback) => {
+        const methodname = 'updateorderstatus'
+        let db = null;
+
+        try {
+            logger.log(RepositoryName, methodname, LogType.logType.VERBOSE, 'updating order status', JSON.stringify({ orderId, status, updatedBy }))
+
+            db = await pool.promise().getConnection();
+            // await db.beginTransaction();
+
+            const sql = `CALL usp_UpdateOrderStatus(?,?,?)`
+
+            const [result] = await db.query(sql, [orderId, status, updatedBy])
+
+            logger.log(RepositoryName, methodname, LogType.logType.RELEASE, 'order status updated successfully', JSON.stringify(result))
+
+            callback(null, result);
+
+
+
+
+
+        } catch (err) {
+            logger.log(RepositoryName, methodname, LogType.logType.EXCEPTION, 'Error updating order status', err.stack);
+            callback(err, null);
         }
     }
 

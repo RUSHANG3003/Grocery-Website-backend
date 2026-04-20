@@ -133,6 +133,56 @@ const orderController = {
                 })
             );
         });
+    },
+
+    updateOrderStatus: (req, res) => {
+        const methodName = 'updateOrderStatus';
+
+        const { orderId, status, updatedBy } = req.body;
+
+        if (!orderId || !status || !updatedBy) {
+            return res.status(400).json(
+                new FailureResponse(false, 'Missing required fields', '400')
+            );
+        }
+
+        logger.log(
+            ControllerName,
+            methodName,
+            LogType.logType.VERBOSE,
+            'Updating order status',
+            JSON.stringify(req.body)
+        );
+
+        orderRepository.updateOrderStatus(orderId, status, updatedBy, (err, result) => {
+            if (err) {
+                logger.log(
+                    ControllerName,
+                    methodName,
+                    LogType.logType.EXCEPTION,
+                    'Failed to update order status',
+                    err.stack
+                );
+
+                return res.status(500).json(
+                    new FailureResponse(false, 'Failed to update order status', '500')
+                );
+            }
+
+            logger.log(
+                ControllerName,
+                methodName,
+                LogType.logType.RELEASE,
+                'Order status updated successfully',
+                JSON.stringify(result)
+            );
+
+            return res.status(200).json(
+                new SuccessResponse(true, {
+                    message: 'Order status updated successfully'
+                })
+            );
+        });
     }
 
 };

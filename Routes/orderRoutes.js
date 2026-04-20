@@ -9,5 +9,7 @@ router.get('/GetOrderHistoryByUserId', authenticateToken, orderController.getOrd
 
 router.get('/getAvailabeOrders', authenticateToken, orderController.getAvailabeOrders);
 
+router.put('/updateOrderStatus', authenticateToken, orderController.updateOrderStatus);
+
 // router.post('/AddItemFromCart',authenticateToken, orderController.AddItemFromCart);
 module.exports = router;

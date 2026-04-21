@@ -183,6 +183,31 @@ const orderController = {
                 })
             );
         });
+    },
+
+    getDeliveyBoys: (req, res) => {
+        const methodName = 'getDeliveryBoys'
+
+        logger.log(ControllerName, methodName, LogType.logType.VERBOSE, 'Getting delivery boy Details')
+
+        orderRepository.getDeliveryBoys((err, result) => {
+            if (err) {
+                logger.log(ControllerName, methodName, LogType.logType.ERROR, 'Failed to get Delivery Boys', err.stack)
+                return res.status(500).json(
+                    new FailureResponse(false, 'Failed to get Delivery Boys', '500')
+                )
+            }
+
+            logger.log(ControllerName, methodName, LogType.logType.RELEASE, 'Delivery Boys Details fetch successfully', JSON.stringify(result))
+            return res.status(200).json(
+                new SuccessResponse(true, {
+                    deliveryBoys: result,
+                    message: 'Delivery Boys Details fetch successfully'
+                })
+            )
+        })
+
+
     }
 
 };

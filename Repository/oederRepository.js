@@ -148,7 +148,33 @@ WHERE o.order_status IN ('PLACED','CONFIRMED','OUT_FOR_DELIVERY')
             logger.log(RepositoryName, methodname, LogType.logType.EXCEPTION, 'Error updating order status', err.stack);
             callback(err, null);
         }
+    },
+
+    getDeliveryBoys: async (callback) => {
+        const methodName = 'getDeliveryBoys'
+        let db = null;
+
+        try {
+
+            logger.log(RepositoryName, methodName, LogType.logType.VERBOSE, 'getting DeliveryBoys')
+
+            db = await pool.promise().getConnection();
+
+            const sql = `CALL usp_GetDeliveryBoys()`;
+
+            const [result] = await db.query(sql);
+
+            logger.log(RepositoryName, methodName, LogType.logType.RELEASE, 'details of delivery boys retreived successfully', JSON.stringify(result));
+            callback(null, result);
+
+        } catch (err) {
+            logger.log(RepositoryName, methodName, LogType.logType.ERROR, 'error getting delivery boys', err.stack)
+            callback(err, null)
+        }
+
     }
+
+
 
 };
 

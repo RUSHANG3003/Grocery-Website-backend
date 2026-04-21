@@ -11,5 +11,7 @@ router.get('/getAvailabeOrders', authenticateToken, orderController.getAvailabeO
 
 router.put('/updateOrderStatus', authenticateToken, orderController.updateOrderStatus);
 
+router.get('/getDeliveryBoys', authenticateToken, orderController.getDeliveyBoys);
+
 // router.post('/AddItemFromCart',authenticateToken, orderController.AddItemFromCart);
 module.exports = router;

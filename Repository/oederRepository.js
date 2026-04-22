@@ -164,16 +164,107 @@ WHERE o.order_status IN ('PLACED','CONFIRMED','OUT_FOR_DELIVERY')
 
             const [result] = await db.query(sql);
 
-            logger.log(RepositoryName, methodName, LogType.logType.RELEASE, 'details of delivery boys retreived successfully', JSON.stringify(result));
-            callback(null, result);
+            const deliveryBoys = result[0];
+
+            logger.log(RepositoryName, methodName, LogType.logType.RELEASE, 'details of delivery boys retreived successfully', JSON.stringify(deliveryBoys));
+            callback(null, deliveryBoys);
 
         } catch (err) {
             logger.log(RepositoryName, methodName, LogType.logType.ERROR, 'error getting delivery boys', err.stack)
             callback(err, null)
         }
 
-    }
+    },
 
+    assignDeliveryBoy: async (orderId, deliveryBoyId, updatedBy, callback) => {
+        const methodName = 'assignDeliveryBoy';
+        let db = null;
+
+        try {
+            logger.log(
+                RepositoryName,
+                methodName,
+                LogType.logType.VERBOSE,
+                'Assigning delivery boy',
+                JSON.stringify({ orderId, deliveryBoyId, updatedBy })
+            );
+
+            db = await pool.promise().getConnection();
+
+            const sql = `CALL usp_AssignDeliveryBoy(?, ?, ?)`;
+
+            const [result] = await db.query(sql, [orderId, deliveryBoyId, updatedBy]);
+
+            logger.log(
+                RepositoryName,
+                methodName,
+                LogType.logType.RELEASE,
+                'Delivery boy assigned successfully',
+                JSON.stringify(result)
+            );
+
+            callback(null, result);
+
+        } catch (err) {
+            logger.log(
+                RepositoryName,
+                methodName,
+                LogType.logType.EXCEPTION,
+                'Error assigning delivery boy',
+                err.stack
+            );
+
+            callback(err, null);
+        } finally {
+            if (db) db.release();
+        }
+    },
+
+    getAssignedOrders: async (deliveryBoyId, callback) => {
+        const methodName = 'getAssignedOrders';
+        let db = null;
+
+        try {
+            logger.log(
+                RepositoryName,
+                methodName,
+                LogType.logType.VERBOSE,
+                'Getting assigned orders',
+                JSON.stringify(deliveryBoyId)
+            );
+
+            db = await pool.promise().getConnection();
+
+            const sql = `CALL usp_GetAssignedOrders(?)`;
+
+            const [result] = await db.query(sql, [deliveryBoyId]);
+
+            const deliveryDetails = result[0];
+
+            logger.log(
+                RepositoryName,
+                methodName,
+                LogType.logType.RELEASE,
+                'Assigned orders retrieved successfully',
+                JSON.stringify(deliveryDetails)
+            );
+
+            callback(null, deliveryDetails);
+
+        } catch (err) {
+            logger.log(
+                RepositoryName,
+                methodName,
+                LogType.logType.EXCEPTION,
+                'Error getting assigned orders',
+                err.stack
+            );
+
+            callback(err, null);
+        } finally {
+            if (db) db.release();
+        }
+    }
 
 
 };

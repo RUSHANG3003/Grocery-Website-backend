@@ -208,7 +208,108 @@ const orderController = {
         })
 
 
-    }
+    },
+
+    assignDeliveryBoy: (req, res) => {
+        const methodName = 'assignDeliveryBoy';
+
+        const { orderId, deliveryBoyId, updatedBy } = req.body;
+
+        if (!orderId || !deliveryBoyId || !updatedBy) {
+            return res.status(400).json(
+                new FailureResponse(false, 'Missing required fields', '400')
+            );
+        }
+
+        logger.log(
+            ControllerName,
+            methodName,
+            LogType.logType.VERBOSE,
+            'Assigning delivery boy',
+            JSON.stringify(req.body)
+        );
+
+        orderRepository.assignDeliveryBoy(orderId, deliveryBoyId, updatedBy, (err, result) => {
+            if (err) {
+                logger.log(
+                    ControllerName,
+                    methodName,
+                    LogType.logType.EXCEPTION,
+                    'Failed to assign delivery boy',
+                    err.stack
+                );
+
+                return res.status(500).json(
+                    new FailureResponse(false, 'Failed to assign delivery boy', '500')
+                );
+            }
+
+            logger.log(
+                ControllerName,
+                methodName,
+                LogType.logType.RELEASE,
+                'Delivery boy assigned successfully',
+                JSON.stringify(result)
+            );
+
+            return res.status(200).json(
+                new SuccessResponse(true, {
+                    message: 'Delivery boy assigned successfully'
+                })
+            );
+        });
+    },
+
+    getAssignedOrders: (req, res) => {
+        const methodName = 'getAssignedOrders';
+
+        const deliveryBoyId = req.query.deliveryBoyId;
+
+        if (!deliveryBoyId) {
+            return res.status(400).json(
+                new FailureResponse(false, 'Missing required fields', '400')
+            );
+        }
+
+        logger.log(
+            ControllerName,
+            methodName,
+            LogType.logType.VERBOSE,
+            'Getting assigned orders',
+            JSON.stringify(req.body)
+        );
+
+        orderRepository.getAssignedOrders(deliveryBoyId, (err, result) => {
+            if (err) {
+                logger.log(
+                    ControllerName,
+                    methodName,
+                    LogType.logType.EXCEPTION,
+                    'Failed to get assigned orders',
+                    err.stack
+                );
+
+                return res.status(500).json(
+                    new FailureResponse(false, 'Failed to get assigned orders', '500')
+                );
+            }
+
+            logger.log(
+                ControllerName,
+                methodName,
+                LogType.logType.RELEASE,
+                'Assigned orders retrieved successfully',
+                JSON.stringify(result)
+            );
+
+            return res.status(200).json(
+                new SuccessResponse(true, {
+                    assignedOrders: result || [],
+                    message: 'Assigned orders retrieved successfully'
+                })
+            );
+        });
+    },
 
 };
 

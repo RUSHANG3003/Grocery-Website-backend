@@ -172,6 +172,8 @@ WHERE o.order_status IN ('PLACED','CONFIRMED','OUT_FOR_DELIVERY')
         } catch (err) {
             logger.log(RepositoryName, methodName, LogType.logType.ERROR, 'error getting delivery boys', err.stack)
             callback(err, null)
+        } finally {
+            if (db) db.release();
         }
 
     },

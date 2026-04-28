@@ -85,6 +85,8 @@ const orderRepository = {
             logger.log(RepositoryName, merhodName, LogType.logType.EXCEPTION, 'Error getting order history by user id', err.stack);
             callback(err, null);
 
+        } finally {
+            if (db) db.release();
         }
     },
 
@@ -120,6 +122,9 @@ WHERE o.order_status IN ('PLACED','CONFIRMED','OUT_FOR_DELIVERY')
             callback(err, null);
 
         }
+        finally {
+            if (db) db.release();
+        }
     },
 
     updateOrderStatus: async (orderId, status, updatedBy, callback) => {
@@ -147,6 +152,9 @@ WHERE o.order_status IN ('PLACED','CONFIRMED','OUT_FOR_DELIVERY')
         } catch (err) {
             logger.log(RepositoryName, methodname, LogType.logType.EXCEPTION, 'Error updating order status', err.stack);
             callback(err, null);
+        }
+        finally {
+            if (db) db.release();
         }
     },
 
